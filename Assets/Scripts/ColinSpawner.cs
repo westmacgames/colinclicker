@@ -2,48 +2,34 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+//Singleton for spawning objects.
+[RequireComponent(typeof(AudioSource))]
 public class ColinSpawner : MonoBehaviour
 {
     public int score = 0;
 
-    //Setting difficulty
-    public enum Difficulty { Easy, Medium, Hard }
-    public Difficulty m_difficulty;
-
     //Colin prefab.
-    public GameObject m_colin; 
+    [SerializeField]
+    private GameObject m_colinPrefab;
 
     //Amount of seconds until next colin is spawned.
-    [SerializeField]
-    private float m_spawnDelay = 1.0f;
+    private float m_spawnDelay = 0.8f;
 
     //Passed to colin on instantiation, to set shrink speed.
-    private float shrinkSpeed = 0;
+    private const float shrinkSpeed = 0.35f;
 
     // Start is called before the first frame update
     void Start()
     {
-        //Difficulty switches
-        switch (m_difficulty)
-        {
-            case Difficulty.Easy:
-                m_spawnDelay = 1;
-                shrinkSpeed = .35f;
-                break;
-            case Difficulty.Medium:
-                m_spawnDelay /= 1.5f;
-                shrinkSpeed = 0.5f;
-                break;
-            case Difficulty.Hard:
-                m_spawnDelay /= 2;
-                shrinkSpeed = 0.5f;
-                break;
-        }
+        Time.timeScale = 1;
 
         //Allow objects to spawn.
         m_canSpawnNextColin = true;
+        
     }
+
     private bool m_canSpawnNextColin = true;
 
     // Update is called once per frame
@@ -58,29 +44,28 @@ public class ColinSpawner : MonoBehaviour
     //Spawns colin
     IEnumerator Spawn()
     {
+        m_canSpawnNextColin = false;
+
         //Generate random coordinates for spawning
-        //200 offset so that it doesnt go offscreen
-        int randXCoord = Random.Range(0 + 100, Camera.main.pixelWidth - 100);
-        int randYCoord = Random.Range(0 + 100, Camera.main.pixelHeight - 100);
-        Vector2 coord = new Vector2(randXCoord, randYCoord);
-
-        Debug.Log("Generated Coordinate: " + coord);
-
         float x = Random.Range(0.05f, 0.95f);
         float y = Random.Range(0.05f, 0.95f);
         Vector3 pos = new Vector3(x, y, 10.0f);
         pos = Camera.main.ViewportToWorldPoint(pos);
 
-        //Spawn, wait the delay, and restart.
-        m_canSpawnNextColin = false;
-
+        //Shrink speed is based on Time.time
         if (Time.time != 0)
-        {  
-            Instantiate(m_colin, pos, Quaternion.identity).GetComponent<Colin>().m_shrinkSpeed = shrinkSpeed;
-        }
+        {   
+            //Decrease the spawnDelay slightly.
+            //Debug.Log(GameObject.FindGameObjectsWithTag("Colin").Length);
+            if (GameObject.FindGameObjectsWithTag("Colin").Length < 3)
+            {
+                //Instance, and initialize it.
+                Colin newColin = Instantiate(m_colinPrefab, pos, Quaternion.identity).GetComponent<Colin>();
+                newColin.m_shrinkSpeed = shrinkSpeed;
 
-        //Decrease the spawnDelay slightly.
-        if (m_spawnDelay < 0.25f) { m_spawnDelay -= 0.05f; }
+                if (m_spawnDelay > 0.35f) { m_spawnDelay -= 0.03f; }
+            }
+        }
         yield return new WaitForSeconds(m_spawnDelay);
         m_canSpawnNextColin = true;
     }
@@ -88,6 +73,7 @@ public class ColinSpawner : MonoBehaviour
     public void IncrementScore()
     {
         score++;
+        GetComponent<AudioSource>().Play();
         GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>().text = "SCORE: " + score;
     }
 }

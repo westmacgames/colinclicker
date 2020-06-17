@@ -14,6 +14,8 @@ public class Colin : MonoBehaviour
     [SerializeField]
     public float m_shrinkSpeed = 0;
 
+    public GameObject gameOverButton;
+
     private void OnMouseDown()
     {
         //Increment the score, and destroy the object.
@@ -24,7 +26,6 @@ public class Colin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         //Scale the object down.
         transform.localScale = new Vector3(transform.localScale.x - (Time.deltaTime * m_shrinkSpeed),
             transform.localScale.y - (Time.deltaTime * m_shrinkSpeed),
@@ -33,7 +34,19 @@ public class Colin : MonoBehaviour
         //Destroy the object if it reaches the threshold.
         if (transform.localScale.x <= m_sizeDespawnThreshold)
         {
-            Destroy(gameObject);
+            Instantiate(gameOverButton, GameObject.Find("Canvas").transform);
+
+            //Destroy every colin
+            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Colin"))
+            {
+                //ColinSpawner.Instance.RemoveColin(g.GetComponent<Colin>());
+                Destroy(g);
+            }
+
+            Destroy(this);
+            Time.timeScale = 0;
+
+            //Game over
             Debug.Log("Game Over");
         }
     }
