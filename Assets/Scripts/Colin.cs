@@ -42,9 +42,8 @@ public class Colin : MonoBehaviour
                 //ColinSpawner.Instance.RemoveColin(g.GetComponent<Colin>());
                 Destroy(g);
             }
-
+            Destroy(GameObject.FindGameObjectWithTag("Spawner"));
             Destroy(this);
-            Time.timeScale = 0;
 
             //Game over
             Debug.Log("Game Over");
