@@ -52,16 +52,19 @@ public class ColinSpawner : MonoBehaviour
 
         //Shrink speed is based on Time.time
         if (Time.time != 0)
-        {   
+        {
+            //Prevent objects from spawning ontop of each other.
+            GameObject[] colins = GameObject.FindGameObjectsWithTag("Colin");
+
             //Decrease the spawnDelay slightly.
             //Debug.Log(GameObject.FindGameObjectsWithTag("Colin").Length);
-            if (GameObject.FindGameObjectsWithTag("Colin").Length < 3)
+            if (colins.Length < 3)
             {
                 //Instance, and initialize it.
                 Colin newColin = Instantiate(m_colinPrefab, pos, Quaternion.identity).GetComponent<Colin>();
                 newColin.m_shrinkSpeed = shrinkSpeed;
 
-                if (m_spawnDelay > 0.35f) { m_spawnDelay -= 0.03f; }
+                if (m_spawnDelay > 0.30f) { m_spawnDelay -= 0.03f; }
             }
         }
         yield return new WaitForSeconds(m_spawnDelay);
