@@ -57,13 +57,13 @@ public class ColinSpawner : MonoBehaviour
 
             //Decrease the spawnDelay slightly.
             //Debug.Log(GameObject.FindGameObjectsWithTag("Colin").Length);
-            if (colins.Length < 4)
+            if (colins.Length < 5)
             {
                 //Instance, and initialize it.
                 Colin newColin = Instantiate(m_colinPrefab, pos, Quaternion.identity).GetComponent<Colin>();
                 newColin.m_shrinkSpeed = shrinkSpeed;
 
-                if (m_spawnDelay > 0.28f) { m_spawnDelay -= 0.03f; }
+                if (m_spawnDelay > 0.2f) { m_spawnDelay -= 0.03f; }
             }
         }
         yield return new WaitForSeconds(m_spawnDelay);
