@@ -24,8 +24,7 @@ public class ColinSpawner : MonoBehaviour
     void Start()
     {
         //Allow objects to spawn.
-        m_canSpawnNextColin = true;
-        
+        m_canSpawnNextColin = true;       
     }
 
     private bool m_canSpawnNextColin = true;
@@ -58,13 +57,13 @@ public class ColinSpawner : MonoBehaviour
 
             //Decrease the spawnDelay slightly.
             //Debug.Log(GameObject.FindGameObjectsWithTag("Colin").Length);
-            if (colins.Length < 3)
+            if (colins.Length < 4)
             {
                 //Instance, and initialize it.
                 Colin newColin = Instantiate(m_colinPrefab, pos, Quaternion.identity).GetComponent<Colin>();
                 newColin.m_shrinkSpeed = shrinkSpeed;
 
-                if (m_spawnDelay > 0.30f) { m_spawnDelay -= 0.03f; }
+                if (m_spawnDelay > 0.28f) { m_spawnDelay -= 0.03f; }
             }
         }
         yield return new WaitForSeconds(m_spawnDelay);
